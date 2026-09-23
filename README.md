@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lendisk — сайт продажи автомобильных дисков
 
-## Getting Started
+Сайт Lendisk: каталог, заявки и админ-панель.
+Стек: **Next.js 16** (App Router, Server Actions), **TypeScript**, **Tailwind CSS 4**, **Motion**, **Prisma** (SQLite локально, PostgreSQL в продакшене), **three.js / react-three-fiber** для 3D.
 
-First, run the development server:
+## Быстрый старт (локально)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env        # заполните AUTH_SECRET и ADMIN_PASSWORD
+npx prisma db push          # создать таблицы
+npm run db:seed             # каталог, настройки, демо-отзывы, FAQ, админ
+npm run dev                 # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Админ-панель находится по адресу **/admin**. Логин и пароль берутся из `ADMIN_LOGIN` / `ADMIN_PASSWORD` в `.env`. В базе пароль хранится только как bcrypt-хэш. После первого входа смените его в разделе «Настройки сайта → Смена пароля».
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Что где
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Раздел | Путь |
+|---|---|
+| Главная, каталог, карточка товара | `src/app/(site)/…` |
+| Админ-панель | `src/app/admin/…` |
+| Серверные действия (заявки, CRUD, настройки) | `src/app/actions/*` |
+| Защита админки (проверка сессии) | `src/proxy.ts`, `src/lib/auth.ts`, `src/lib/session.ts` |
+| Схема БД | `prisma/schema.prisma` |
+| Тексты и контакты по умолчанию | `src/lib/settings-defaults.ts` |
+| Логотип | `public/brand/lendisk-logo.svg`, `src/components/brand/Logo.tsx` |
+| Фото каталога (из xls) | `public/catalog/*.webp` |
+| Загрузки из админки (фото, логотип, 3D) | `storage/uploads` (отдаются через `/media/...`) |
 
-## Learn More
+## Уведомления и выгрузка заявок
 
-To learn more about Next.js, take a look at the following resources:
+- **Telegram:** создайте бота через @BotFather и напишите ему любое сообщение. `chat_id` возьмите из `https://api.telegram.org/bot<TOKEN>/getUpdates`, затем укажите `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` в `.env`. Каждая новая заявка будет приходить в Telegram со ссылкой на неё в админке. Если переменные пусты, уведомления выключены.
+- **Excel:** «Заявки → Скачать в Excel (CSV)», файл открывается в Excel с кириллицей.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Импорт склада из Excel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Фото и позиции импортированы из «Склад Диски Краснодар.xls» и «Склад Диски Крым.xls». Позиции обоих складов объединены в один каталог, склад хранится служебным полем. Скрипт вытаскивает встроенные в xls фотографии и привязывает их к строкам.
 
-## Deploy on Vercel
+```bash
+pip install xlrd olefile pillow
+python3 scripts/import_xls.py "Склад Диски Краснодар.xls" "Склад Диски Крым.xls"
+npm run db:seed              # добавит новые позиции, существующие (и их цены) не трогает
+npm run db:reset-catalog     # ВНИМАНИЕ: пересоздать каталог целиком (правки из админки по товарам будут потеряны)
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Временные цены (9 000–12 000 ₽) проставляются по порядку оптовой цены. Цены хранятся **только в базе данных**, меняются в админке — по одному товару, прямо в списке или массово по бренду и диаметру.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Деплой (продакшен)
+
+1. Создайте PostgreSQL (Neon, Supabase, Render, Yandex Cloud и т.п.).
+2. В `prisma/schema.prisma` замените `provider = "sqlite"` на `provider = "postgresql"`.
+3. Переменные окружения: `DATABASE_URL`, `AUTH_SECRET` (`openssl rand -base64 48`), `ADMIN_LOGIN`, `ADMIN_PASSWORD`, `NEXT_PUBLIC_SITE_URL=https://ваш-домен`, `UPLOAD_DIR`.
+4. `npm install && npx prisma db push && npm run db:seed && npm run build && npm start`.
+5. Загрузки из админки пишутся в `UPLOAD_DIR`. Нужен постоянный диск (VPS, Render Disk), либо замените `src/lib/storage.ts` на S3 / Object Storage.
+
+## Проверено
+
+- Главная: интро с логотипом, вращающийся диск на подиуме, все блоки, карта, кнопки связи.
+- Каталог: фильтры по бренду, диаметру, цене, наличию, марке авто и PCD, поиск (модель, артикул, `R19`, `5x112`), сортировка, пагинация, мобильная панель фильтров.
+- Карточка товара: галерея, вращение 360° перетаскиванием, 3D-просмотр загруженной GLB-модели, schema.org Product.
+- Заявки: валидация (телефон, VIN, согласие на обработку ПД), сохранение в БД, отображение в админке, смена статуса, заметки, удаление.
+- Админка: вход (bcrypt, подписанная httpOnly-cookie, лимит попыток), CRUD товаров, фото, 3D, быстрая и массовая смена цен, отзывы, FAQ, настройки, смена логотипа и пароля.
+- SEO: title, description, Open Graph, favicon, `sitemap.xml`, `robots.txt`, JSON-LD (AutoPartsStore, Product, FAQPage, BreadcrumbList).

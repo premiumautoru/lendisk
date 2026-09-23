@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# lendisk
+/prisma/*.db
+/prisma/*.db-journal
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+!.env.example
+
+# local tooling
+/.claude/settings.local.json
+__pycache__/
