@@ -1,9 +1,9 @@
 /**
- * Brand intro shown once per browser session: the Lendisk mark draws itself on black,
+ * Brand intro shown once per browser session, on desktop only (phones open instantly for a fast first paint): the Lendisk mark draws itself on black,
  * the wordmark fades in, then the overlay dissolves into the hero.
  * Pure CSS + a tiny inline script so it works before hydration and never blocks content.
  */
-const script = `(function(){try{var d=document.documentElement;if(sessionStorage.getItem('lendisk-intro')||matchMedia('(prefers-reduced-motion: reduce)').matches)return;sessionStorage.setItem('lendisk-intro','1');d.classList.add('intro','intro-seq');setTimeout(function(){d.classList.add('intro-out')},1500);setTimeout(function(){d.classList.remove('intro','intro-out')},2200)}catch(e){}})()`;
+const script = `(function(){try{var d=document.documentElement;if(sessionStorage.getItem('lendisk-intro')||matchMedia('(prefers-reduced-motion: reduce)').matches||!matchMedia('(min-width: 1024px)').matches)return;sessionStorage.setItem('lendisk-intro','1');d.classList.add('intro','intro-seq');setTimeout(function(){d.classList.add('intro-out')},1150);setTimeout(function(){d.classList.remove('intro','intro-out')},1750)}catch(e){}})()`;
 
 export function IntroScript() {
   return <script dangerouslySetInnerHTML={{ __html: script }} />;

@@ -5,16 +5,28 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getCatalog, getFacets, parseQuery } from "@/lib/catalog";
 import { getSettings } from "@/lib/settings";
 import { ProductCard } from "@/components/catalog/ProductCard";
-import { ActiveFilters, FilterSidebar, MobileFilters, SearchBox, SortSelect } from "@/components/catalog/Filters";
+import { ActiveFilters, FilterSidebar, MobileFilters, ResetFiltersButton, SearchBox, SortSelect } from "@/components/catalog/Filters";
+import { plural } from "@/lib/format";
 import { LeadDialog } from "@/components/forms/LeadDialog";
 
 export async function generateMetadata(props: PageProps<"/catalog">): Promise<Metadata> {
   const q = parseQuery(await props.searchParams);
-  const d = q.d?.length === 1 ? ` R${q.d[0]}` : "";
+  const single = q.d?.length === 1 ? q.d[0] : null;
+  const d = single ? ` R${single}` : "";
+  // Only the plain catalogue and one-diameter pages (e.g. /catalog?d=19) are indexable landing pages.
+  // Search results, sorting and filter combinations are noindex (links are still followed) to avoid duplicates.
+  const extraFilters = Boolean(q.q || q.brand?.length || q.series?.length || q.pcd?.length || q.make || q.min || q.max || q.stock || q.sort || (q.d && q.d.length > 1));
+  const params = new URLSearchParams();
+  if (single && !extraFilters) params.set("d", single);
+  if ((q.page || 1) > 1 && !extraFilters) params.set("page", String(q.page));
+  const canonical = params.toString() ? `/catalog?${params}` : "/catalog";
+  const page = (q.page || 1) > 1 ? ` — страница ${q.page}` : "";
   return {
-    title: `Каталог автомобильных дисков${d} в наличии в Москве`,
+    title: `Каталог автомобильных дисков${d} в наличии в Москве${page}`,
     description: `Купить литые и кованые диски${d} в Москве и Московской области. Диски в наличии, подбор по автомобилю и доставка в день заказа — Lendisk.`,
-    alternates: { canonical: "/catalog" },
+    alternates: { canonical },
+    robots: extraFilters ? { index: false, follow: true } : undefined,
+    openGraph: { url: canonical },
   };
 }
 
@@ -29,8 +41,7 @@ function pageHref(sp: Record<string, string | string[] | undefined>, page: numbe
 export default async function CatalogPage(props: PageProps<"/catalog">) {
   const sp = await props.searchParams;
   const q = parseQuery(sp);
-  const [s, facets, { items, total, pages }] = await Promise.all([getSettings(), getFacets(), getCatalog(q)]);
-  const page = Math.min(q.page || 1, pages);
+  const [s, facets, { items, total, pages, page }] = await Promise.all([getSettings(), getFacets(q), getCatalog(q)]);
   const around = Array.from({ length: pages }, (_, i) => i + 1).filter((n) => n === 1 || n === pages || Math.abs(n - page) <= 1);
 
   return (
@@ -45,7 +56,7 @@ export default async function CatalogPage(props: PageProps<"/catalog">) {
               <p className="eyebrow mb-4">Lendisk · в наличии</p>
               <h1 className="font-display text-[clamp(2rem,6vw,4.4rem)] font-bold uppercase leading-[0.95]">Каталог дисков</h1>
               <p className="mt-4 text-bone/55">
-                Найдено <span className="text-bone">{total.toLocaleString("ru-RU")}</span> позиций · цена за 1 диск
+                Найдено <span className="text-bone">{total.toLocaleString("ru-RU")}</span> {plural(total, "позиция", "позиции", "позиций")} · цена за 1 диск
               </p>
             </div>
           </div>
@@ -74,11 +85,14 @@ export default async function CatalogPage(props: PageProps<"/catalog">) {
                 </div>
               ) : (
                 <div className="rounded-[1.6rem] border border-white/[0.08] bg-graphite p-10 text-center">
-                  <p className="font-display text-xl">Ничего не нашлось</p>
-                  <p className="mx-auto mt-3 max-w-md text-bone/55">Попробуйте изменить фильтры — или оставьте заявку, и мы подберём диски под ваш автомобиль.</p>
-                  <LeadDialog variant="podbor" title="Подберём диски под ваш автомобиль" className="btn btn-gold mt-6">
-                    Оставить заявку на подбор
-                  </LeadDialog>
+                  <p className="font-display text-xl">Нет дисков с такими параметрами</p>
+                  <p className="mx-auto mt-3 max-w-md text-bone/55">Уберите один из фильтров выше или сбросьте все. Если нужного диска нет в наличии — оставьте заявку, и мы подберём вариант под ваш автомобиль.</p>
+                  <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+                    <ResetFiltersButton className="btn btn-ghost" />
+                    <LeadDialog variant="podbor" title="Подберём диски под ваш автомобиль" className="btn btn-gold">
+                      Оставить заявку на подбор
+                    </LeadDialog>
+                  </div>
                 </div>
               )}
 

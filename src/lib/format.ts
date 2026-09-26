@@ -60,3 +60,15 @@ export function plural(n: number, one: string, few: string, many: string) {
   if (b === 1) return one;
   return many;
 }
+
+/** Date (YYYY-MM-DD) N days ahead — used for schema.org Offer.priceValidUntil. */
+export function daysAhead(n: number) {
+  return new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+}
+
+/**
+ * PCD values contain "×" and a decimal comma ("5×114,3"). The comma clashed with the separator of
+ * multi-value URL params, so URLs use a readable ASCII form: 5x114.3 ⇄ 5×114,3.
+ */
+export const pcdToUrl = (v: string) => v.replace("×", "x").replace(",", ".");
+export const pcdFromUrl = (v: string) => v.replace(/[xх*]/i, "×").replace(".", ",");

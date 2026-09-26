@@ -4,6 +4,7 @@ import { Header } from "@/components/site/Header";
 import { MobileContactBar } from "@/components/site/MobileContactBar";
 import { contactsFrom } from "@/components/site/contacts";
 import { RevealObserver } from "@/components/ui/Reveal";
+import { Cursor } from "@/components/ui/Cursor";
 import { getSettings } from "@/lib/settings";
 import { SITE_URL } from "@/lib/site";
 
@@ -39,6 +40,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
       <Footer contacts={contacts} />
       <MobileContactBar contacts={contacts} />
       <RevealObserver />
+      <Cursor />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </>
   );

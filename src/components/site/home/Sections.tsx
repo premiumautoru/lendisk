@@ -17,7 +17,7 @@ function SectionHead({ eyebrow, title, children, action }: { eyebrow: string; ti
     <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between" data-reveal>
       <div className="max-w-2xl">
         <p className="eyebrow mb-4">{eyebrow}</p>
-        <h2 className="text-balance font-display text-[clamp(1.7rem,4.2vw,3rem)] font-semibold uppercase leading-[1.02] tracking-[0.01em]">{title}</h2>
+        <h2 className="text-balance font-display text-[clamp(1.45rem,4.2vw,3rem)] font-semibold uppercase leading-[1.05] tracking-[0.01em]">{title}</h2>
         {children && <p className="mt-5 max-w-xl text-pretty leading-relaxed text-bone/55">{children}</p>}
       </div>
       {action}
@@ -33,7 +33,7 @@ export function Marquee() {
     <div className="overflow-hidden border-y border-white/[0.06] bg-ink-2 py-5" aria-hidden>
       <div className="flex w-max animate-marquee gap-10">
         {[...row, ...row].map((t, i) => (
-          <span key={i} className="flex items-center gap-10 font-display text-sm uppercase tracking-[0.2em] text-bone/45">
+          <span key={i} className="flex items-center gap-10 font-display text-sm uppercase tracking-[0.2em] text-bone/70">
             {t}
             <svg viewBox="0 0 100 100" className="size-4" fill="none" stroke="#b08a4a" strokeWidth="8" strokeLinecap="round">
               <rect x="4" y="4" width="92" height="92" rx="24" />
@@ -228,7 +228,7 @@ export function Reviews({ reviews }: { reviews: Review[] }) {
               style={{ ["--reveal-delay" as string]: `${(i % 4) * 90}ms` }}
               className="flex w-[82%] shrink-0 snap-start flex-col rounded-[1.4rem] border border-white/[0.07] bg-graphite p-7 sm:w-auto"
             >
-              <div className="flex gap-1 text-gold" aria-label={`Оценка ${r.rating} из 5`}>
+              <div className="flex gap-1 text-gold" role="img" aria-label={`Оценка ${r.rating} из 5`}>
                 {Array.from({ length: 5 }, (_, k) => (
                   <Star key={k} className="size-4" fill={k < r.rating ? "currentColor" : "none"} strokeWidth={1.5} />
                 ))}

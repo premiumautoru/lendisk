@@ -48,6 +48,11 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: { card: "summary_large_image", title: s.seoTitle, description: s.seoDescription },
     formatDetection: { telephone: true },
+    // set GOOGLE_SITE_VERIFICATION / YANDEX_VERIFICATION after adding the site in Search Console / Webmaster
+    verification: {
+      google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+      yandex: process.env.YANDEX_VERIFICATION || undefined,
+    },
   };
 }
 
