@@ -42,7 +42,8 @@ function useQueryState() {
     if (nav.pending === current) nav.pending = null;
   }, [current]);
   const sp = nav.pending !== null && nav.pending !== current ? new URLSearchParams(nav.pending) : urlParams;
-  const list = (k: string) => (sp.get(k) || "").split(",").filter(Boolean);
+  // read at call time, not from this render: a second quick click must build on the first one's pending URL
+  const list = (k: string) => (new URLSearchParams(nav.pending ?? current).get(k) || "").split(",").filter(Boolean);
   const set = (patch: Record<string, string | string[] | null>) => {
     const next = new URLSearchParams(nav.pending ?? current);
     // "Серия" depends on the brand: a series of another brand would give an empty page
@@ -153,7 +154,10 @@ function FilterBody({ facets, inlineReset = true }: { facets: Facets; inlineRese
   const make = sp.get("make") || "";
   const stock = sp.get("stock") === "1";
   const [showAllPcd, setShowAllPcd] = useState(false);
-  const toggle = (k: string, arr: string[], v: string) => set({ [k]: arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v] });
+  const toggle = (k: string, v: string) => {
+    const arr = list(k);
+    set({ [k]: arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v] });
+  };
   const pcdList = showAllPcd ? facets.pcds : facets.pcds.filter((p, i) => i < 8 || pcds.includes(p.url));
 
   return (
@@ -177,7 +181,7 @@ function FilterBody({ facets, inlineReset = true }: { facets: Facets; inlineRese
       <Group title="Диаметр">
         <div className="flex flex-wrap gap-2">
           {facets.diameters.map((d) => (
-            <Chip key={d.value} active={ds.includes(d.value)} disabled={d.count === 0} onClick={() => toggle("d", ds, d.value)}>
+            <Chip key={d.value} active={ds.includes(d.value)} disabled={d.count === 0} onClick={() => toggle("d", d.value)}>
               R{d.value}
               <Count n={d.count} />
             </Chip>
@@ -203,7 +207,7 @@ function FilterBody({ facets, inlineReset = true }: { facets: Facets; inlineRese
       <Group title="Бренд">
         <div className="flex flex-wrap gap-2">
           {facets.brands.map((b) => (
-            <Chip key={b.value} active={brands.includes(b.value)} disabled={b.count === 0} onClick={() => toggle("brand", brands, b.value)}>
+            <Chip key={b.value} active={brands.includes(b.value)} disabled={b.count === 0} onClick={() => toggle("brand", b.value)}>
               {b.value}
               <Count n={b.count} />
             </Chip>
@@ -225,7 +229,7 @@ function FilterBody({ facets, inlineReset = true }: { facets: Facets; inlineRese
       <Group title="Разболтовка (PCD)">
         <div className="flex flex-wrap gap-2">
           {pcdList.map((p) => (
-            <Chip key={p.url} active={pcds.includes(p.url)} disabled={p.count === 0} onClick={() => toggle("pcd", pcds, p.url)}>
+            <Chip key={p.url} active={pcds.includes(p.url)} disabled={p.count === 0} onClick={() => toggle("pcd", p.url)}>
               {p.value}
               <Count n={p.count} />
             </Chip>
@@ -285,10 +289,9 @@ export function SortSelect() {
 }
 
 export function ActiveFilters() {
-  const { sp, set, reset, pending } = useQueryState();
+  const { sp, list, set, reset, pending } = useQueryState();
   const chips = useMemo(() => {
     const out: { label: string; clear: () => void }[] = [];
-    const list = (k: string) => (sp.get(k) || "").split(",").filter(Boolean);
     if (sp.get("stock") === "1") out.push({ label: "В наличии", clear: () => set({ stock: null }) });
     for (const d of list("d")) out.push({ label: `R${d}`, clear: () => set({ d: list("d").filter((x) => x !== d) }) });
     if (sp.get("min") || sp.get("max")) out.push({ label: `${sp.get("min") || 0} – ${sp.get("max") || "∞"} ₽`, clear: () => set({ min: null, max: null }) });
