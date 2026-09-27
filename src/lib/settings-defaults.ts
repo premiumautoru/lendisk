@@ -31,6 +31,19 @@ export const SETTINGS_DEFAULTS = {
   ctaTitle: "Не нашли нужные диски?",
   ctaText: "Оставьте заявку — команда Lendisk подберёт подходящий вариант под ваш автомобиль.",
 
+  // requisites — copied as-is from the entrepreneur's registration details
+  legalName: "Индивидуальный предприниматель Алиев Ленур Сейрамович",
+  legalShort: "ИП Алиев Л.С.",
+  inn: "910802813530",
+  ogrnip: "325911200028907",
+  regDate: "19.03.2025",
+  legalAddress: "Республика Крым, г. Симферополь, ул. Киевская, д.153, кв. 182",
+  legalEmail: "sportsk.ooo@mail.ru",
+  bankName: "АО «ТБанк»",
+  bankAccount: "40802810600008066261",
+  bankBik: "044525974",
+  bankCorr: "30101810145250000974",
+
   seoTitle: "Lendisk — автомобильные диски в Москве",
   seoDescription:
     "Lendisk — продажа автомобильных дисков в Москве и Московской области. Диски в наличии, подбор по автомобилю и быстрая доставка.",
@@ -77,6 +90,22 @@ export const SETTINGS_GROUPS: { title: string; fields: { key: SettingKey; label:
       { key: "deliveryText", label: "Доставка — текст", long: true },
       { key: "ctaTitle", label: "CTA — заголовок" },
       { key: "ctaText", label: "CTA — текст", long: true },
+    ],
+  },
+  {
+    title: "Реквизиты",
+    fields: [
+      { key: "legalName", label: "Полное наименование" },
+      { key: "legalShort", label: "Краткое наименование", hint: "Показывается в подвале сайта" },
+      { key: "inn", label: "ИНН" },
+      { key: "ogrnip", label: "ОГРНИП" },
+      { key: "regDate", label: "Дата регистрации" },
+      { key: "legalAddress", label: "Юридический адрес", long: true },
+      { key: "legalEmail", label: "E-mail (реквизиты)" },
+      { key: "bankName", label: "Банк" },
+      { key: "bankAccount", label: "Расчётный счёт" },
+      { key: "bankBik", label: "БИК" },
+      { key: "bankCorr", label: "Корр. счёт" },
     ],
   },
   {

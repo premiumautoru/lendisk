@@ -47,6 +47,8 @@ export function Footer({ contacts }: { contacts: Contacts }) {
               <li><Link className="hover:text-gold" href="/#delivery">Доставка</Link></li>
               <li><Link className="hover:text-gold" href="/#faq">Вопросы и ответы</Link></li>
               <li><Link className="hover:text-gold" href="/#reviews">Отзывы</Link></li>
+              <li><Link className="hover:text-gold" href="/gallery">Галерея</Link></li>
+              <li><Link className="hover:text-gold" href="/requisites">Реквизиты</Link></li>
               <li><Link className="hover:text-gold" href="/privacy">Политика конфиденциальности</Link></li>
             </ul>
           </div>
@@ -75,8 +77,19 @@ export function Footer({ contacts }: { contacts: Contacts }) {
         </div>
 
         <div className="mt-6 flex flex-col gap-3 border-t border-white/[0.06] pt-6 text-xs text-bone/40 sm:flex-row sm:justify-between">
-          <p>© {year} Lendisk. Автомобильные диски в Москве и Московской области.</p>
-          <p>Информация на сайте не является публичной офертой. Цены и наличие уточняйте у менеджера.</p>
+          <div className="space-y-1">
+            <p>© {year} Lendisk. Автомобильные диски в Москве и Московской области.</p>
+            {contacts.legal.short && (
+              <p>
+                <Link href="/requisites" className="hover:text-gold">
+                  {contacts.legal.short}
+                  {contacts.legal.inn && ` · ИНН ${contacts.legal.inn}`}
+                  {contacts.legal.ogrnip && ` · ОГРНИП ${contacts.legal.ogrnip}`}
+                </Link>
+              </p>
+            )}
+          </div>
+          <p className="sm:max-w-sm sm:text-right">Информация на сайте не является публичной офертой. Цены и наличие уточняйте у менеджера.</p>
         </div>
       </div>
     </footer>

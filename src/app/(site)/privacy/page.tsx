@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = { title: "Политика обработки персональных данных", alternates: { canonical: "/privacy" } };
@@ -26,7 +27,18 @@ export default async function PrivacyPage() {
           <a href={`tel:${s.phone.replace(/[^\d+]/g, "")}`} className="text-gold">{s.phone}</a>.
         </p>
         <h2>5. Контакты оператора</h2>
-        <p>Lendisk, {s.address}, {s.city}. Телефон: {s.phone}.</p>
+        {s.legalName ? (
+          <p>
+            Оператор персональных данных — {s.legalName}
+            {s.inn && `, ИНН ${s.inn}`}
+            {s.ogrnip && `, ОГРНИП ${s.ogrnip}`}
+            {s.legalAddress && `. Юридический адрес: ${s.legalAddress}`}. Магазин Lendisk: {s.address}, {s.city}. Телефон: {s.phone}
+            {s.legalEmail && `, e-mail: ${s.legalEmail}`}. Полные реквизиты — на странице{" "}
+            <Link href="/requisites" className="text-gold">«Реквизиты»</Link>.
+          </p>
+        ) : (
+          <p>Lendisk, {s.address}, {s.city}. Телефон: {s.phone}.</p>
+        )}
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import type { Contacts } from "./contacts";
 const NAV = [
   { href: "/catalog", label: "Каталог" },
   { href: "/#podbor", label: "Подбор" },
+  { href: "/gallery", label: "Галерея" },
   { href: "/#delivery", label: "Доставка" },
   { href: "/#reviews", label: "Отзывы" },
   { href: "/#faq", label: "Вопросы" },

@@ -11,6 +11,8 @@ import { LogoMark } from "@/components/brand/Logo";
 import { MaxIcon, TelegramIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { YandexMap } from "@/components/site/YandexMap";
 import { plural } from "@/lib/format";
+import { Gallery } from "@/components/gallery/Gallery";
+import { GALLERY } from "@/data/gallery";
 
 function SectionHead({ eyebrow, title, children, action }: { eyebrow: string; title: React.ReactNode; children?: React.ReactNode; action?: React.ReactNode }) {
   return (
@@ -127,6 +129,31 @@ export function BrandStatement({ diameters }: { diameters: { value: string; coun
             </Link>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────── gallery ───────── */
+export function GallerySection() {
+  return (
+    <section id="gallery" className="scroll-mt-20 overflow-hidden py-16 sm:py-24">
+      <div className="container-x">
+        <SectionHead
+          eyebrow="Галерея"
+          title={<>Диски, которые <span className="text-gold">задают характер</span></>}
+          action={
+            <Link href="/gallery" className="btn btn-ghost self-start md:self-auto">
+              Вся галерея <ArrowRight className="size-4" />
+            </Link>
+          }
+        >
+          Подборка кадров для вдохновения: как цвет, рисунок спиц и размер меняют облик автомобиля.
+        </SectionHead>
+        <div data-reveal>
+          <Gallery photos={GALLERY.slice(0, 6)} />
+        </div>
+        <p className="mt-6 text-xs text-bone/35">Иллюстративные фото с Unsplash, не работы Lendisk. Авторы указаны при просмотре и на странице галереи.</p>
       </div>
     </section>
   );
@@ -338,6 +365,20 @@ export function ContactsSection({ contacts }: { contacts: Contacts }) {
                 </div>
               </li>
             </ul>
+            {contacts.legal.short && (
+              <div className="mt-8 rounded-2xl border border-white/[0.08] bg-ink/40 p-5 text-sm">
+                <p className="text-xs uppercase tracking-[0.16em] text-bone/40">Продавец</p>
+                <p className="mt-2 text-bone">{contacts.legal.short}</p>
+                <p className="mt-1 tabular-nums text-bone/60">
+                  {contacts.legal.inn && <>ИНН {contacts.legal.inn}</>}
+                  {contacts.legal.ogrnip && <> · ОГРНИП {contacts.legal.ogrnip}</>}
+                </p>
+                {contacts.legal.email && (
+                  <a href={`mailto:${contacts.legal.email}`} className="mt-1 inline-block text-bone/60 hover:text-gold">{contacts.legal.email}</a>
+                )}
+                <Link href="/requisites" className="mt-3 block text-gold hover:underline">Все реквизиты →</Link>
+              </div>
+            )}
             <div className="mt-10 grid gap-3 sm:grid-cols-2">
               <a href={contacts.route} target="_blank" rel="noopener" className="btn btn-gold sm:col-span-2">
                 <Navigation className="size-4" /> Построить маршрут

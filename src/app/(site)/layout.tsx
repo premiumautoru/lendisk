@@ -21,6 +21,9 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
     image: `${SITE_URL}/opengraph-image`,
     telephone: s.phone.replace(/[^\d+]/g, ""),
     priceRange: "₽₽",
+    ...(s.legalName && { legalName: s.legalName }),
+    ...(s.inn && { taxID: s.inn }),
+    ...(s.legalEmail && { email: s.legalEmail }),
     address: {
       "@type": "PostalAddress",
       streetAddress: s.address,
