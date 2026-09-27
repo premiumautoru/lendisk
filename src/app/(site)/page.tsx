@@ -3,7 +3,7 @@ import { getFacets, getFeatured } from "@/lib/catalog";
 import { getSettings } from "@/lib/settings";
 import { contactsFrom } from "@/components/site/contacts";
 import { Hero } from "@/components/site/home/Hero";
-import { Advantages, BrandStatement, ContactsSection, Cta, Delivery, Faq, GallerySection, Marquee, Podbor, ProductGrid, Reviews } from "@/components/site/home/Sections";
+import { Advantages, BrandStatement, ContactsSection, Cta, Delivery, Faq, Marquee, Podbor, ProductGrid, Reviews } from "@/components/site/home/Sections";
 
 export default async function HomePage() {
   const [s, popular, fresh, facets, total, reviews, faq] = await Promise.all([
@@ -30,7 +30,6 @@ export default async function HomePage() {
       <ProductGrid id="popular" eyebrow="Хиты Lendisk" title="Популярные диски" items={popular} whatsapp={s.whatsapp} href="/catalog" text="Модели, которые чаще всего выбирают наши клиенты." />
       <BrandStatement diameters={facets.diameters} />
       <ProductGrid id="new" eyebrow="Только что на складе" title="Новые поступления" items={fresh} whatsapp={s.whatsapp} href="/catalog?sort=new" />
-      <GallerySection />
       <Podbor s={s} />
       <Delivery s={s} />
       <Reviews reviews={reviews} />

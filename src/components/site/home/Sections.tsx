@@ -11,8 +11,6 @@ import { LogoMark } from "@/components/brand/Logo";
 import { MaxIcon, TelegramIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { YandexMap } from "@/components/site/YandexMap";
 import { plural } from "@/lib/format";
-import { Gallery } from "@/components/gallery/Gallery";
-import { GALLERY } from "@/data/gallery";
 
 function SectionHead({ eyebrow, title, children, action }: { eyebrow: string; title: React.ReactNode; children?: React.ReactNode; action?: React.ReactNode }) {
   return (
@@ -129,30 +127,6 @@ export function BrandStatement({ diameters }: { diameters: { value: string; coun
             </Link>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-/* ───────── gallery ───────── */
-export function GallerySection() {
-  return (
-    <section id="gallery" className="scroll-mt-20 overflow-hidden py-20 sm:py-32">
-      <div className="container-x">
-        <div className="mb-12 flex flex-col gap-6 md:mb-16 md:flex-row md:items-end md:justify-between" data-reveal>
-          <div className="max-w-xl">
-            <p className="mb-4 text-xs uppercase tracking-[0.3em] text-bone/40">Галерея</p>
-            <h2 className="text-balance font-display text-[clamp(1.45rem,4.2vw,3rem)] font-semibold uppercase leading-[1.05] tracking-[0.01em]">Диски в деталях</h2>
-            <p className="mt-5 text-pretty leading-relaxed text-bone/50">Цвет, рисунок спиц и посадка — то, что меняет облик автомобиля.</p>
-          </div>
-          <Link href="/gallery" className="group inline-flex items-center gap-2 self-start text-sm text-bone/60 transition hover:text-bone md:self-auto">
-            Вся галерея <ArrowRight className="size-4 transition group-hover:translate-x-1" />
-          </Link>
-        </div>
-        <div data-reveal>
-          <Gallery photos={GALLERY.slice(0, 4)} />
-        </div>
-        <p className="mt-10 text-xs text-bone/30">Иллюстративные фото с Unsplash, не работы Lendisk.</p>
       </div>
     </section>
   );
