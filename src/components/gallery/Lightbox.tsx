@@ -47,7 +47,7 @@ export default function Lightbox({ photos, index, onIndex, onClose }: { photos: 
     for (const k of [index + 1, index - 1]) {
       const q = photos[(k + n) % n];
       const img = new Image();
-      img.src = `${q.file}${window.innerWidth > 900 ? "" : "-sm"}.webp`;
+      img.src = `${q.file}${window.innerWidth > 800 ? "" : "-sm"}.webp`;
     }
     return () => window.removeEventListener("keydown", onKey);
   });
@@ -72,10 +72,10 @@ export default function Lightbox({ photos, index, onIndex, onClose }: { photos: 
     >
       {/* top bar */}
       <div className="flex items-center justify-between gap-4 px-4 pb-2 pt-[max(1rem,env(safe-area-inset-top))] sm:px-8 sm:pt-6">
-        <span className="font-display text-xs tabular-nums tracking-[0.25em] text-bone/60">
+        <span className="text-xs tabular-nums text-bone/50">
           {String(index + 1).padStart(2, "0")} <span className="text-bone/25">/ {String(n).padStart(2, "0")}</span>
         </span>
-        <button ref={closeBtn} type="button" onClick={onClose} aria-label="Закрыть" className="grid size-11 place-items-center rounded-full border border-white/15 text-bone/80 transition hover:border-gold hover:text-gold">
+        <button ref={closeBtn} type="button" onClick={onClose} aria-label="Закрыть" className="grid size-11 place-items-center rounded-full border border-white/15 text-bone/80 transition hover:border-bone/60 hover:text-bone">
           <X className="size-5" />
         </button>
       </div>
@@ -103,23 +103,23 @@ export default function Lightbox({ photos, index, onIndex, onClose }: { photos: 
             {/* eslint-disable-next-line @next/next/no-img-element -- pre-sized WebP */}
             <img
               src={`${p.file}.webp`}
-              srcSet={`${p.file}-sm.webp 900w, ${p.file}.webp 1920w`}
+              srcSet={`${p.file}-sm.webp 800w, ${p.file}.webp 1600w`}
               sizes="100vw"
               width={p.width}
               height={p.height}
               alt={p.alt}
               draggable={false}
-              className="max-h-full w-full select-none object-contain sm:rounded-2xl"
+              className="max-h-full w-full select-none object-contain sm:rounded-xl"
             />
           </motion.figure>
         </AnimatePresence>
 
         {n > 1 && (
           <>
-            <button type="button" onClick={() => go(-1)} aria-label="Предыдущее фото" className="absolute left-4 top-1/2 hidden size-12 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/40 text-bone/80 backdrop-blur transition hover:border-gold hover:text-gold sm:grid">
+            <button type="button" onClick={() => go(-1)} aria-label="Предыдущее фото" className="absolute left-4 top-1/2 hidden size-12 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/40 text-bone/80 backdrop-blur transition hover:border-bone/60 hover:text-bone sm:grid">
               <ChevronLeft className="size-5" />
             </button>
-            <button type="button" onClick={() => go(1)} aria-label="Следующее фото" className="absolute right-4 top-1/2 hidden size-12 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/40 text-bone/80 backdrop-blur transition hover:border-gold hover:text-gold sm:grid">
+            <button type="button" onClick={() => go(1)} aria-label="Следующее фото" className="absolute right-4 top-1/2 hidden size-12 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-black/40 text-bone/80 backdrop-blur transition hover:border-bone/60 hover:text-bone sm:grid">
               <ChevronRight className="size-5" />
             </button>
           </>
@@ -129,14 +129,14 @@ export default function Lightbox({ photos, index, onIndex, onClose }: { photos: 
       {/* caption + thumbnails */}
       <div className="px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4 sm:px-8 sm:pb-6">
         <div className="mx-auto flex max-w-6xl flex-col gap-1 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
-          <p className="font-display text-lg uppercase tracking-[0.04em] sm:text-2xl">{p.title}</p>
+          <p className="text-base text-bone/85 sm:text-lg">{p.title}</p>
           <p className="text-xs text-bone/45">
             Фото:{" "}
-            <a href={p.authorUrl} target="_blank" rel="noopener" className="underline decoration-white/20 underline-offset-2 hover:text-gold">{p.author}</a>{" "}
+            <a href={p.authorUrl} target="_blank" rel="noopener" className="underline decoration-white/20 underline-offset-2 hover:text-bone">{p.author}</a>{" "}
             /{" "}
-            <a href={p.source} target="_blank" rel="noopener" className="underline decoration-white/20 underline-offset-2 hover:text-gold">Unsplash</a>
+            <a href={p.source} target="_blank" rel="noopener" className="underline decoration-white/20 underline-offset-2 hover:text-bone">Unsplash</a>
             {" · "}
-            <a href={GALLERY_LICENSE.url} target="_blank" rel="noopener" className="hover:text-gold">{GALLERY_LICENSE.name}</a>
+            <a href={GALLERY_LICENSE.url} target="_blank" rel="noopener" className="hover:text-bone">{GALLERY_LICENSE.name}</a>
           </p>
         </div>
         {n > 1 && (
@@ -151,7 +151,7 @@ export default function Lightbox({ photos, index, onIndex, onClose }: { photos: 
                 }}
                 aria-label={`Фото ${i + 1}: ${q.title}`}
                 aria-current={i === index ? "true" : undefined}
-                className={clsx("h-12 w-[4.5rem] overflow-hidden rounded-lg border transition duration-300", i === index ? "border-gold opacity-100" : "border-transparent opacity-40 hover:opacity-80")}
+                className={clsx("h-14 w-11 overflow-hidden rounded-md border transition duration-300", i === index ? "border-bone/80 opacity-100" : "border-transparent opacity-40 hover:opacity-80")}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element -- tiny thumbnail */}
                 <img src={`${q.file}-sm.webp`} alt="" loading="lazy" className="size-full object-cover" />
@@ -162,7 +162,7 @@ export default function Lightbox({ photos, index, onIndex, onClose }: { photos: 
         {n > 1 && (
           <div className="mt-4 flex justify-center gap-1.5 sm:hidden" aria-hidden>
             {photos.map((q, i) => (
-              <span key={q.file} className={clsx("h-1 rounded-full transition-all duration-500", i === index ? "w-6 bg-gold" : "w-1.5 bg-white/20")} />
+              <span key={q.file} className={clsx("h-1 rounded-full transition-all duration-500", i === index ? "w-6 bg-bone/80" : "w-1.5 bg-white/20")} />
             ))}
           </div>
         )}

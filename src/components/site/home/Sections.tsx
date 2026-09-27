@@ -137,23 +137,22 @@ export function BrandStatement({ diameters }: { diameters: { value: string; coun
 /* ───────── gallery ───────── */
 export function GallerySection() {
   return (
-    <section id="gallery" className="scroll-mt-20 overflow-hidden py-16 sm:py-24">
+    <section id="gallery" className="scroll-mt-20 overflow-hidden py-20 sm:py-32">
       <div className="container-x">
-        <SectionHead
-          eyebrow="Галерея"
-          title={<>Диски, которые <span className="text-gold">задают характер</span></>}
-          action={
-            <Link href="/gallery" className="btn btn-ghost self-start md:self-auto">
-              Вся галерея <ArrowRight className="size-4" />
-            </Link>
-          }
-        >
-          Подборка кадров для вдохновения: как цвет, рисунок спиц и размер меняют облик автомобиля.
-        </SectionHead>
-        <div data-reveal>
-          <Gallery photos={GALLERY.slice(0, 6)} />
+        <div className="mb-12 flex flex-col gap-6 md:mb-16 md:flex-row md:items-end md:justify-between" data-reveal>
+          <div className="max-w-xl">
+            <p className="mb-4 text-xs uppercase tracking-[0.3em] text-bone/40">Галерея</p>
+            <h2 className="text-balance font-display text-[clamp(1.45rem,4.2vw,3rem)] font-semibold uppercase leading-[1.05] tracking-[0.01em]">Диски в деталях</h2>
+            <p className="mt-5 text-pretty leading-relaxed text-bone/50">Цвет, рисунок спиц и посадка — то, что меняет облик автомобиля.</p>
+          </div>
+          <Link href="/gallery" className="group inline-flex items-center gap-2 self-start text-sm text-bone/60 transition hover:text-bone md:self-auto">
+            Вся галерея <ArrowRight className="size-4 transition group-hover:translate-x-1" />
+          </Link>
         </div>
-        <p className="mt-6 text-xs text-bone/35">Иллюстративные фото с Unsplash, не работы Lendisk. Авторы указаны при просмотре и на странице галереи.</p>
+        <div data-reveal>
+          <Gallery photos={GALLERY.slice(0, 4)} />
+        </div>
+        <p className="mt-10 text-xs text-bone/30">Иллюстративные фото с Unsplash, не работы Lendisk.</p>
       </div>
     </section>
   );
@@ -365,20 +364,6 @@ export function ContactsSection({ contacts }: { contacts: Contacts }) {
                 </div>
               </li>
             </ul>
-            {contacts.legal.short && (
-              <div className="mt-8 rounded-2xl border border-white/[0.08] bg-ink/40 p-5 text-sm">
-                <p className="text-xs uppercase tracking-[0.16em] text-bone/40">Продавец</p>
-                <p className="mt-2 text-bone">{contacts.legal.short}</p>
-                <p className="mt-1 tabular-nums text-bone/60">
-                  {contacts.legal.inn && <>ИНН {contacts.legal.inn}</>}
-                  {contacts.legal.ogrnip && <> · ОГРНИП {contacts.legal.ogrnip}</>}
-                </p>
-                {contacts.legal.email && (
-                  <a href={`mailto:${contacts.legal.email}`} className="mt-1 inline-block text-bone/60 hover:text-gold">{contacts.legal.email}</a>
-                )}
-                <Link href="/requisites" className="mt-3 block text-gold hover:underline">Все реквизиты →</Link>
-              </div>
-            )}
             <div className="mt-10 grid gap-3 sm:grid-cols-2">
               <a href={contacts.route} target="_blank" rel="noopener" className="btn btn-gold sm:col-span-2">
                 <Navigation className="size-4" /> Построить маршрут

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { MapPin, Phone, Clock } from "lucide-react";
 import { LogoMark } from "@/components/brand/Logo";
 import { MaxIcon, TelegramIcon, WhatsAppIcon } from "@/components/ui/icons";
-import type { Contacts } from "./contacts";
+import type { Contacts, Legal } from "./contacts";
 
 export function Footer({ contacts }: { contacts: Contacts }) {
   const year = new Date().getFullYear();
@@ -48,7 +48,6 @@ export function Footer({ contacts }: { contacts: Contacts }) {
               <li><Link className="hover:text-gold" href="/#faq">Вопросы и ответы</Link></li>
               <li><Link className="hover:text-gold" href="/#reviews">Отзывы</Link></li>
               <li><Link className="hover:text-gold" href="/gallery">Галерея</Link></li>
-              <li><Link className="hover:text-gold" href="/requisites">Реквизиты</Link></li>
               <li><Link className="hover:text-gold" href="/privacy">Политика конфиденциальности</Link></li>
             </ul>
           </div>
@@ -77,21 +76,29 @@ export function Footer({ contacts }: { contacts: Contacts }) {
         </div>
 
         <div className="mt-6 flex flex-col gap-3 border-t border-white/[0.06] pt-6 text-xs text-bone/40 sm:flex-row sm:justify-between">
-          <div className="space-y-1">
-            <p>© {year} Lendisk. Автомобильные диски в Москве и Московской области.</p>
-            {contacts.legal.short && (
-              <p>
-                <Link href="/requisites" className="hover:text-gold">
-                  {contacts.legal.short}
-                  {contacts.legal.inn && ` · ИНН ${contacts.legal.inn}`}
-                  {contacts.legal.ogrnip && ` · ОГРНИП ${contacts.legal.ogrnip}`}
-                </Link>
-              </p>
-            )}
-          </div>
+          <p>© {year} Lendisk. Автомобильные диски в Москве и Московской области.</p>
           <p className="sm:max-w-sm sm:text-right">Информация на сайте не является публичной офертой. Цены и наличие уточняйте у менеджера.</p>
         </div>
+
+        {contacts.legal.name && <Requisites legal={contacts.legal} />}
       </div>
     </footer>
+  );
+}
+
+/** Seller requisites — the only place they appear on the site: small, muted, one line per group. */
+function Requisites({ legal: l }: { legal: Legal }) {
+  const join = (parts: (string | false)[]) => parts.filter(Boolean).join(" · ");
+  const lines = [
+    join([l.name, l.inn && `ИНН ${l.inn}`, l.ogrnip && `ОГРНИП ${l.ogrnip}`, l.regDate && `Дата регистрации ${l.regDate}`]),
+    join([l.address && `Юридический адрес: ${l.address}`, l.email && `E-mail: ${l.email}`]),
+    join([l.bank.name && `Банк ${l.bank.name}`, l.bank.account && `р/с ${l.bank.account}`, l.bank.bik && `БИК ${l.bank.bik}`, l.bank.corr && `к/с ${l.bank.corr}`]),
+  ].filter(Boolean);
+  return (
+    <div className="mt-6 space-y-1 border-t border-white/[0.04] pt-5 text-[0.7rem] leading-relaxed text-bone/30 tabular-nums">
+      {lines.map((t) => (
+        <p key={t}>{t}</p>
+      ))}
+    </div>
   );
 }
