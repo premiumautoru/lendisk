@@ -44,6 +44,11 @@ export const SETTINGS_DEFAULTS = {
   bankBik: "044525974",
   bankCorr: "30101810145250000974",
 
+  // search engines: only the content="…" value of the verification meta tag
+  yandexVerification: "",
+  googleVerification: "",
+  mailruVerification: "",
+
   seoTitle: "Lendisk — автомобильные диски в Москве",
   seoDescription:
     "Lendisk — продажа автомобильных дисков в Москве и Московской области. Диски в наличии, подбор по автомобилю и быстрая доставка.",
@@ -52,7 +57,12 @@ export const SETTINGS_DEFAULTS = {
 export type SettingKey = keyof typeof SETTINGS_DEFAULTS;
 export type SiteSettings = Record<SettingKey, string>;
 
-export const SETTINGS_GROUPS: { title: string; fields: { key: SettingKey; label: string; long?: boolean; hint?: string }[] }[] = [
+export const SETTINGS_GROUPS: {
+  title: string;
+  description?: string;
+  note?: string;
+  fields: { key: SettingKey; label: string; long?: boolean; hint?: string; placeholder?: string }[];
+}[] = [
   {
     title: "Контакты",
     fields: [
@@ -113,6 +123,16 @@ export const SETTINGS_GROUPS: { title: string; fields: { key: SettingKey; label:
     fields: [
       { key: "seoTitle", label: "Title сайта" },
       { key: "seoDescription", label: "Description сайта", long: true },
+    ],
+  },
+  {
+    title: "Поисковые системы",
+    description: "Коды подтверждения прав из вебмастеров — вставьте только значение content (можно вставить и весь мета-тег, лишнее уберётся само).",
+    note: "После сохранения код появится на всех страницах сайта — возвращайтесь в вебмастер и нажимайте «Проверить». О новых, изменённых и удалённых дисках Яндекс и Bing узнают автоматически.",
+    fields: [
+      { key: "yandexVerification", label: "Яндекс.Вебмастер", placeholder: "a1b2c3d4e5f6", hint: "Вебмастер → Настройки → Права доступа → Мета-тег" },
+      { key: "googleVerification", label: "Google Search Console", placeholder: "AbCdEf…", hint: "Способ «HTML-тег»" },
+      { key: "mailruVerification", label: "Mail.ru", placeholder: "необязательно", hint: "Кабинет вебмастера Mail.ru → мета-тег mailru-domain" },
     ],
   },
 ];

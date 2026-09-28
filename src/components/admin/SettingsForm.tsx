@@ -34,17 +34,19 @@ export function SettingsForm({ settings }: { settings: SiteSettings }) {
 
       {SETTINGS_GROUPS.map((g) => (
         <Card key={g.title} title={g.title}>
+          {g.description && <p className="-mt-2 mb-5 text-sm text-bone/50">{g.description}</p>}
           <div className="grid gap-4 sm:grid-cols-2">
             {g.fields.map((f) => (
               <AdminField key={f.key} label={f.label} hint={f.hint} className={f.long ? "sm:col-span-2" : undefined}>
                 {f.long ? (
                   <textarea name={f.key} defaultValue={settings[f.key]} rows={3} className="field !h-auto py-3" />
                 ) : (
-                  <input name={f.key} defaultValue={settings[f.key]} className="field" />
+                  <input name={f.key} defaultValue={settings[f.key]} placeholder={f.placeholder} className="field" />
                 )}
               </AdminField>
             ))}
           </div>
+          {g.note && <p className="mt-5 rounded-xl border border-gold/25 bg-gold/[0.06] p-4 text-sm leading-relaxed text-bone/70">{g.note}</p>}
         </Card>
       ))}
 

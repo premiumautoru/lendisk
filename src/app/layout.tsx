@@ -50,10 +50,11 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: { card: "summary_large_image", title: s.seoTitle, description: s.seoDescription },
     appleWebApp: { capable: true, title: "Lendisk", statusBarStyle: "black-translucent" },
     formatDetection: { telephone: true },
-    // set GOOGLE_SITE_VERIFICATION / YANDEX_VERIFICATION after adding the site in Search Console / Webmaster
+    // codes are entered in Admin → Настройки → Поисковые системы (env variables still work as a fallback)
     verification: {
-      google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
-      yandex: process.env.YANDEX_VERIFICATION || undefined,
+      google: s.googleVerification || process.env.GOOGLE_SITE_VERIFICATION || undefined,
+      yandex: s.yandexVerification || process.env.YANDEX_VERIFICATION || undefined,
+      other: s.mailruVerification ? { "mailru-domain": s.mailruVerification } : undefined,
     },
   };
 }

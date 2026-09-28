@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { removeFile, saveImage, saveLogo, saveModel } from "@/lib/storage";
 import { SETTINGS_DEFAULTS, type SettingKey } from "@/lib/settings-defaults";
+import { pingIndexNow } from "@/lib/indexnow";
 
 export type FormState = { ok?: boolean; error?: string; message?: string };
 
@@ -162,6 +163,7 @@ export async function saveProduct(id: string | null, _prev: FormState, form: For
   };
 
   let productId = id;
+  const oldSlug = id ? (await prisma.product.findUnique({ where: { id }, select: { slug: true } }))?.slug : undefined;
   try {
     if (id) {
       if (form.get("removeModel") === "on") {
@@ -178,6 +180,7 @@ export async function saveProduct(id: string | null, _prev: FormState, form: For
     return { error: e instanceof Error ? e.message : "Не удалось сохранить" };
   }
   refreshSite();
+  pingIndexNow([`/catalog/${slug}`, ...(oldSlug && oldSlug !== slug ? [`/catalog/${oldSlug}`] : []), "/catalog"]);
   if (!id) redirect(`/admin/products/${productId}?created=1`);
   return { ok: true, message: "Изменения сохранены" };
 }
@@ -188,8 +191,9 @@ export async function quickUpdateProduct(id: string, patch: { price?: number; in
   if (patch.price !== undefined && Number.isFinite(patch.price) && patch.price >= 0) data.price = Math.round(patch.price);
   if (patch.inStock !== undefined) data.inStock = patch.inStock;
   if (patch.stockQty !== undefined && Number.isFinite(patch.stockQty) && patch.stockQty >= 0) data.stockQty = Math.round(patch.stockQty);
-  await prisma.product.update({ where: { id }, data });
+  const p = await prisma.product.update({ where: { id }, data, select: { slug: true } });
   refreshSite();
+  pingIndexNow([`/catalog/${p.slug}`]);
 }
 
 export async function bulkPrice(form: FormData): Promise<void> {
@@ -198,8 +202,11 @@ export async function bulkPrice(form: FormData): Promise<void> {
   const diameter = Number(form.get("diameter") || 0);
   const price = Math.round(num(form.get("price")));
   if (!(price > 0)) return;
-  await prisma.product.updateMany({ where: { ...(brand ? { brand } : {}), ...(diameter ? { diameter } : {}) }, data: { price } });
+  const where = { ...(brand ? { brand } : {}), ...(diameter ? { diameter } : {}) };
+  await prisma.product.updateMany({ where, data: { price } });
   refreshSite();
+  const changed = await prisma.product.findMany({ where: { ...where, published: true }, select: { slug: true } });
+  pingIndexNow([...changed.map((c) => `/catalog/${c.slug}`), "/catalog"]);
 }
 
 export async function deleteProduct(id: string) {
@@ -211,6 +218,7 @@ export async function deleteProduct(id: string) {
     await prisma.product.delete({ where: { id } });
   }
   refreshSite();
+  if (p) pingIndexNow([`/catalog/${p.slug}`, "/catalog"]);
   redirect("/admin/products?deleted=1");
 }
 
@@ -307,7 +315,9 @@ export async function saveSettings(_prev: FormState, form: FormData): Promise<Fo
       if (key === "logoUrl") continue;
       const v = form.get(key);
       if (v === null) continue;
-      const value = String(v).trim().slice(0, 4000);
+      let value = String(v).trim().slice(0, 4000);
+      // a whole <meta … content="…"> tag pasted into a verification field → keep only the code
+      if (key.endsWith("Verification")) value = (value.match(/content=["']([^"']+)["']/i)?.[1] ?? value).replace(/[^\w\-.:]/g, "").slice(0, 200);
       await prisma.setting.upsert({ where: { key }, update: { value }, create: { key, value } });
     }
     const logo = form.get("logo");
