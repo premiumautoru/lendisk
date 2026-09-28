@@ -3,6 +3,7 @@ import { Manrope, Unbounded } from "next/font/google";
 import { getSettings } from "@/lib/settings";
 import { SITE_URL } from "@/lib/site";
 import { IntroScript } from "@/components/brand/Intro";
+import { PwaRegister } from "@/components/pwa/Install";
 import "./globals.css";
 
 const unbounded = Unbounded({
@@ -47,6 +48,7 @@ export async function generateMetadata(): Promise<Metadata> {
       url: "/",
     },
     twitter: { card: "summary_large_image", title: s.seoTitle, description: s.seoDescription },
+    appleWebApp: { capable: true, title: "Lendisk", statusBarStyle: "black-translucent" },
     formatDetection: { telephone: true },
     // set GOOGLE_SITE_VERIFICATION / YANDEX_VERIFICATION after adding the site in Search Console / Webmaster
     verification: {
@@ -69,7 +71,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <IntroScript />
       </head>
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        {children}
+        <PwaRegister />
+      </body>
     </html>
   );
 }

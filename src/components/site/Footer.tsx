@@ -47,6 +47,7 @@ export function Footer({ contacts }: { contacts: Contacts }) {
               <li><Link className="hover:text-gold" href="/#delivery">Доставка</Link></li>
               <li><Link className="hover:text-gold" href="/#faq">Вопросы и ответы</Link></li>
               <li><Link className="hover:text-gold" href="/#reviews">Отзывы</Link></li>
+              <li><Link className="hover:text-gold" href="/app">Приложение для телефона</Link></li>
               <li><Link className="hover:text-gold" href="/privacy">Политика конфиденциальности</Link></li>
             </ul>
           </div>
